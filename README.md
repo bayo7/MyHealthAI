@@ -30,4 +30,4 @@ Bu proje aktif geliştirme aşamasındadır. Gelecek sürümler için planlanan 
 3. Projeyi Visual Studio ile açıp `F5` ile başlatın.
 
 ---
-*Geliştirici: [Senin Adın]*
+*Geliştirici: [Bayram Burak Yalav]*
