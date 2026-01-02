@@ -1,0 +1,259 @@
+﻿@{
+    ViewData["Title"] = "AI Sağlık Asistanı";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-primary"><i class="fa-solid fa-user-doctor"></i> MyHealthAI</h1>
+                <p class="lead text-muted">Yapay Zeka Destekli Ön Değerlendirme ve Triage Sistemi</p>
+                <div class="alert alert-warning d-inline-block">
+                    <small><i class="fa-solid fa-triangle-exclamation"></i> Bu sistem sadece bilgilendirme amaçlıdır. Kesin tanı için doktora başvurunuz.</small>
+                </div>
+            </div>
+
+            <div class="card shadow-lg border-0" id="inputFormCard">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-clipboard-list"></i> Hasta Bilgileri ve Semptomlar</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form id="healthForm">
+                        <h6 class="text-primary mb-3">Kişisel Bilgiler</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3">
+                                <label class="form-label">Yaş</label>
+                                <input type="number" class="form-control" id="yas" placeholder="Örn: 25" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Cinsiyet</label>
+                                <select class="form-select" id="cinsiyet">
+                                    <option value="Erkek">Erkek</option>
+                                    <option value="Kadın">Kadın</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Boy (cm)</label>
+                                <input type="number" class="form-control" id="boy" placeholder="180">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Kilo (kg)</label>
+                                <input type="number" class="form-control" id="kilo" placeholder="75">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Meslek</label>
+                                <input type="text" class="form-control" id="meslek" placeholder="Örn: Yazılımcı, İnşaat İşçisi...">
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <h6 class="text-primary mb-3">Tıbbi Geçmiş & Riskler</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Kronik Hastalıklar</label>
+                                <input type="text" class="form-control" id="kronik" placeholder="Örn: Diyabet, Astım (Yoksa boş bırakın)">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Aile Öyküsü</label>
+                                <input type="text" class="form-control" id="aile" placeholder="Örn: Babada kalp krizi">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Seyahat Geçmişi (Son 6 ay)</label>
+                                <input type="text" class="form-control" id="seyahat" placeholder="Örn: Afrika seyahati, Kamp tatili...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Kullanılan İlaçlar / Alışkanlıklar</label>
+                                <input type="text" class="form-control" id="ilaclar" placeholder="Örn: Günde 1 paket sigara, Tansiyon ilacı">
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <h6 class="text-primary mb-3">Şikayet Detayları</h6>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Ana Şikayetiniz Nedir? *</label>
+                            <input type="text" class="form-control" id="anaSikayet" required placeholder="Örn: Şiddetli baş ağrısı ve mide bulantısı">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hikayesi (Ne zaman başladı, nasıl arttı?)</label>
+                            <textarea class="form-control" id="hikaye" rows="2" placeholder="Örn: 2 gün önce başladı, ışığa bakınca artıyor..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ek Belirtiler</label>
+                            <input type="text" class="form-control" id="ekBelirtiler" placeholder="Örn: Ateş, titreme, döküntü...">
+                        </div>
+
+                        <div class="alert alert-info mt-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-file-medical fa-2x me-3"></i>
+                                <div>
+                                    <strong>Tahlil Sonucu Yükle (İsteğe Bağlı)</strong><br />
+                                    <small>Kan tahlili veya rapor fotoğrafını yükleyin, yapay zeka okusun.</small>
+                                </div>
+                            </div>
+                            <input type="file" class="form-control mt-2" id="labDosyasi" accept="image/*">
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="button" onclick="analizEt()" class="btn btn-primary btn-lg">
+                                <i class="fa-solid fa-robot"></i> Analizi Başlat
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="loadingDiv" class="text-center py-5 d-none">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h4 class="mt-3 text-muted">Yapay Zeka Verileri Analiz Ediyor...</h4>
+                <p>Lütfen bekleyin, tıp literatürü taranıyor.</p>
+            </div>
+
+            <div id="resultDiv" class="d-none animate__animated animate__fadeIn">
+
+                <div class="card shadow border-0 mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fa-solid fa-stethoscope"></i> Analiz Sonuçları</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="olasiliklarListesi" class="list-group list-group-flush">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow border-0 mb-4" id="labResultsCard">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fa-solid fa-flask"></i> Laboratuvar Bulguları</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul id="labUyarilariListesi" class="list-group">
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card shadow border-0 bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title text-primary">Genel Özet</h6>
+                        <p class="card-text" id="ozetMetni"></p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button class="btn btn-outline-secondary" onclick="window.location.reload()">Yeni Analiz Yap</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    async function analizEt() {
+        // 1. UI Değişiklikleri (Yükleniyor göster)
+        document.getElementById('inputFormCard').classList.add('d-none');
+        document.getElementById('loadingDiv').classList.remove('d-none');
+
+        // 2. Form Verilerini Topla
+        const requestData = {
+            yas: parseInt(document.getElementById('yas').value) || 0,
+            cinsiyet: document.getElementById('cinsiyet').value,
+            boy: parseFloat(document.getElementById('boy').value) || 0,
+            kilo: parseFloat(document.getElementById('kilo').value) || 0,
+            meslek: document.getElementById('meslek').value,
+            kronikHastaliklar: document.getElementById('kronik').value ? [document.getElementById('kronik').value] : [],
+            aileOykusu: document.getElementById('aile').value ? [document.getElementById('aile').value] : [],
+            seyahatGecmisi: document.getElementById('seyahat').value,
+            kullandigiIlaclar: document.getElementById('ilaclar').value ? [document.getElementById('ilaclar').value] : [],
+            anaSikayet: document.getElementById('anaSikayet').value,
+            sikayetHikayesi: document.getElementById('hikaye').value,
+            ekBelirtiler: document.getElementById('ekBelirtiler').value ? [document.getElementById('ekBelirtiler').value] : [],
+            labResmiBase64: "",
+            labResmiMimeType: ""
+        };
+
+        // 3. Dosya Varsa Base64'e Çevir
+        const fileInput = document.getElementById('labDosyasi');
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            requestData.labResmiMimeType = file.type;
+            requestData.labResmiBase64 = await toBase64(file);
+            // "data:image/jpeg;base64," kısmını temizlememiz lazım, API saf base64 ister
+            requestData.labResmiBase64 = requestData.labResmiBase64.split(',')[1];
+        }
+
+        // 4. API İsteği Gönder
+        try {
+            const response = await fetch('/api/Analysis/tahmin-et', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (!response.ok) throw new Error("API Hatası");
+
+            const result = await response.json();
+            sonuclariGoster(result);
+
+        } catch (error) {
+            alert("Bir hata oluştu: " + error.message);
+            document.getElementById('loadingDiv').classList.add('d-none');
+            document.getElementById('inputFormCard').classList.remove('d-none');
+        }
+    }
+
+    function sonuclariGoster(data) {
+        document.getElementById('loadingDiv').classList.add('d-none');
+        document.getElementById('resultDiv').classList.remove('d-none');
+
+        // Olasılıkları Listele
+        const list = document.getElementById('olasiliklarListesi');
+        list.innerHTML = "";
+        data.olasiliklar.forEach(item => {
+            const badgeColor = item.aciliyetVarMi ? 'bg-danger' : 'bg-info';
+            const html = `
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1 text-primary">${item.hastalikAdi}</h5>
+                        <small class="badge ${badgeColor}">${item.olasilikSeviyesi}</small>
+                    </div>
+                    <p class="mb-1 text-muted">${item.nedenBuTahmin}</p>
+                    <small class="fw-bold text-dark"><i class="fa-solid fa-hospital-user"></i> Gitmeniz Gereken Bölüm: ${item.onerilenBolum}</small>
+                </div>
+            `;
+            list.innerHTML += html;
+        });
+
+        // Lab Uyarıları
+        const labList = document.getElementById('labUyarilariListesi');
+        labList.innerHTML = "";
+        if(data.labUyarilari && data.labUyarilari.length > 0) {
+            data.labUyarilari.forEach(lab => {
+                labList.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>${lab.parametre}:</strong> ${lab.aciklama}
+                    </div>
+                    <span class="badge bg-warning rounded-pill text-dark">${lab.durum}</span>
+                </li>`;
+            });
+        } else {
+            document.getElementById('labResultsCard').classList.add('d-none');
+        }
+
+        // Özet
+        document.getElementById('ozetMetni').innerText = data.ozetDegerlendirme;
+    }
+
+    // Yardımcı Fonksiyon: Dosyayı Base64'e çevirir
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+</script>
